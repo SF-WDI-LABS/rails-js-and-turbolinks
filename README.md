@@ -139,7 +139,7 @@ The solution here is pretty clear; we  need to make sure we're careful with our 
 
 Listed below are **two** ways to do this.  There are of course others but the key is to be very precise in what you're binding to.
 
-1. Use very specific complex selectors or very specific IDs.
+#### Use very specific complex selectors or very specific IDs.
 
   ```html
   <!-- this -->
@@ -159,7 +159,7 @@ Listed below are **two** ways to do this.  There are of course others but the ke
 
   In either case the key is to make our **selectors** as specific as possible.
 
-1. The other alternative is to add a little page-specific identifier to each page.  Then we can bind our JS to that:
+#### Add a page-specific identifier to each page.
 
   ```html
   <!-- app/views/layouts/application.html.erb -->
