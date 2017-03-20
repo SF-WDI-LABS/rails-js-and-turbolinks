@@ -130,7 +130,7 @@ What happens if we have a button on our `posts/new` page, defined as `<button cl
 
 It works.  No problems.  
 
-But, what if we also have a modal on `/posts/:id` that lets users submit a comment.  It might also be defined with `<button class="btn" id="save">`, so this JS will bind to it as well.  We'll try to save a post when we really want to just save the comment.  Or maybe we'll do both?
+But, what if we also have a modal on `/posts/:id` that lets users submit a comment, also  defined with `<button class="btn" id="save">`? This JS will bind to the other button as well.  We'll try to save a post when we really want to just save the comment.  Or maybe we'll do both?
 
 
 ### Dealing with this problem
@@ -148,7 +148,7 @@ Listed below are **two** ways to do this.  There are of course others but the ke
   <button class="btn" id="new-save-post">
   ```
 
-    Another alternative might be to scope our jQuery better.
+  Another alternative might be to scope our jQuery better.
 
   ```js
   //this
