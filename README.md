@@ -180,9 +180,9 @@ Listed below are **two** ways to do this.  There are of course others but the ke
 
 ____
 
-## Working with turbolinks
+## Working with Turbolinks
 
-### What is turbolinks?
+### What is Turbolinks?
 
 **Turbolinks is magic**.  It uses JavaScript to take over all the `<a href=...` tags.  
 
