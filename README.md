@@ -1,39 +1,51 @@
-# Working with JS and turbolinks in Rails
+<!--
+location: SF
+-->
 
-| Objectives |
-|------------|
-| Know what the term 'unobtrusive javascript' means |
-| Be able to use JS in Rails and take advantage of the Asset Pipeline's minification |
-| Be able to scope JavaScript to specific pages. |
-| Be able to make use of turbolinks to dramatically speed up your app. |
-| Be able to use JS alongside turbolinks |
+![](https://ga-dash.s3.amazonaws.com/production/assets/logo-9f88ae6c9c3871690e33280fcf557f33.png)
+# Working with JS and Turbolinks in Rails
 
+### What are the objectives?
+<!-- specific/measurable goal for students to achieve -->
+*After this workshop, developers will be able to:*
 
+* Define the term 'unobtrusive javascript'
+* Use JS in Rails and take advantage of the Asset Pipeline's minification
+* Scope JavaScript to specific pages.
+* Use Turbolinks to dramatically speed up app.
+* Use JS alongside Turbolinks.
+
+### Where should we be now?
+<!-- call out the skills that are prerequisites -->
+*Before this workshop, developers should already be able to:*
+
+- Explain the basics of the Asset Pipeline.
+- Demonstrate appropriate use of JavaScript in a non-Rails app.
 
 # Using JavaScript in Rails is a little different...
 
-Rails has a couple of features that make using javascript on your pages a little bit different.  Those include **the asset pipeline** and **turbolinks**.
+Rails has a couple of features that make using JavaScript on your pages a little bit different.  Those include **the asset pipeline** and **turbolinks**.
 
-##### built-in Unobtrusive JavaScript helpers
+##### Built-in Unobtrusive JavaScript helpers
 
-Rails makes it easy to turn on some simple JavaScript with a single key:value.  All of these helpers degrade gracefully on browsers with incomplete support.
+Rails makes it easy to turn on some simple JavaScript with a single `key: value`.  All of these helpers degrade gracefully on browsers with incomplete support.
 
-##### the Asset Pipeline
+##### Review: The Asset Pipeline
 
 The asset pipeline is there to help speed up our pages.  It combines all of our JS files into one minified (in production) JS file.  That means that **all your JS code runs on every page**.
 
-If you have a `$('img').on('click'` it's going to be called for every image in your app on every page.
+If you have an `$('img').on('click'` it's going to be called for every image in your app on every page.
 
 ##### Turbolinks
 
 Turbolinks will make it so that your `$(document).ready` is only called on the first page the user visits.  When they click a link and view a new page, `$(document).ready` is not triggered again.
 
-As you've seen we can simply [disable turbolinks](http://blog.steveklabnik.com/posts/2013-06-25-removing-turbolinks-from-rails-4).  Later on we'll see how we can work _with turbolinks_.
+If we don't want that, we can simply [disable turbolinks](http://blog.steveklabnik.com/posts/2013-06-25-removing-turbolinks-from-rails-4).  But in this lab, we'll see how we can work _with turbolinks_.
 
 
 ## Unobtrusive JavaScript in Rails
 
-Rails - on it's own follows the conventions of **unobtrusive javascript**.  The Rails devs suggest that we do the same.  
+Rails follows the conventions of **unobtrusive javascript**.  The Rails developers suggest that we do the same.  
 
 Basic **Unobtrusive JavaScript** guidelines:
 
@@ -50,17 +62,17 @@ The tools that we discuss below can all be used to follow the unobtrusive javasc
 
 ### Working with the unobtrusive driver
 
-You've probably already used it to display a pop-up alert: `data: {confirm: "Are you sure?"}`
+You've probably already used the unobstrusive driver to display a pop-up alert: `data: {confirm: "Are you sure?"}`.
 
 ```html
 <%= link_to 'Delete Album', album, method: :delete, class: 'btn btn-danger', data: { confirm: "Are you sure you want to delete '#{album.name}'?" } %>
 ```
 
-This is just one of the many available helpers provided by the jquery_ujs gem included in Rails.  Others include: 
+This is just one of the many available helpers provided by the `jquery_ujs` gem included in Rails.  Others include:
 
 
-* "data-disable-with": Automatic disabling of links and submit buttons in forms
-* "data-method": Links that result in POST, PUT, or DELETE requests
+* `data-disable-with`: Automatic disabling of links and submit buttons in forms
+* `data-method`: Links that result in POST, PUT, or DELETE requests
 
 See more [here](https://github.com/rails/jquery-ujs/wiki/Unobtrusive-scripting-support-for-jQuery).
 
@@ -68,7 +80,7 @@ See more [here](https://github.com/rails/jquery-ujs/wiki/Unobtrusive-scripting-s
 
 There are also several AJAX helpers that degrade gracefully.  
 
-The most important one to know is **`data-remote: true`** which will configure the JavaScript driver to use AJAX with the link, button or form. 
+The most important one to know is **`data-remote: true`** which will configure the JavaScript driver to use AJAX with the link, button or form.
 
 Let's look at an example:
 
@@ -92,94 +104,92 @@ $(document).on("ajax:success", '.counter', function(e, data) {
 $(document).on("ajax:error", '.counter', function(e, xhr, status) {
   console.log('Oh no! Error!');
 });
-
 ```
 
 Checkout [this wiki](https://github.com/rails/jquery-ujs/wiki/ajax) for more details!
 
 > Of course you *can* still use regular jQuery and AJAX.  They just won't have the graceful degrading that you get with the unobtrusive driver.
 
-_____ 
+_____
 
 ## Working with the Asset Pipeline
 
-The Asset Pipeline is a great tool for minifying all of your assets and speeding up page load times.  But it adds some additional challenges when working with JavaScript.  
+The Asset Pipeline is a great tool for minifying all of your assets and speeding up page load times. It gives you the chance to organize your javascript into many files and not have to worry about synchronizing which script depends on others and organizing your script tags to match. But it adds some additional challenges when working with JavaScript.
 
-It also gives you the chance to organize your javascript into many files and not have to worry about synchronizing which script depends on others and organizing your script tags to match.
+Since **all** of our JavaScript is active on every page in the app we have to be careful about how we bind to events.  For example:
 
-Since all of our javascript in the app is active on every page in the app we have to be careful about how we bind to events.  For example:
-
-```js
-$('button#save').on('click', function(e) { 
+```
+$('button#save').on('click', function(e) {
   console.log('save button clicked!');
   var title = $('input#title').val();
-  $.post('/posts', { title: title }).success(....
+  $.post('/posts', { title: title }).success(...);
+};
 ```
 
-What happens if we have a button `<button class="btn" id="save">` on our `posts/new` page?
+What happens if we have a button on our `posts/new` page, defined as `<button class="btn" id="save">`?
 
-It works right?  No problems.  
+It works.  No problems.  
 
-Now what if we also have a modal on `/posts/:id` that lets users submit a comment.  It might also have a `<button class="btn" id="save">` and our JS here will bind to it as well.  We'll try to save a post when we really want to just save the comment.  Or maybe we'll do both?
+But, what if we also have a modal on `/posts/:id` that lets users submit a comment.  It might also be defined with `<button class="btn" id="save">`, so this JS will bind to it as well.  We'll try to save a post when we really want to just save the comment.  Or maybe we'll do both?
 
 
 ### Dealing with this problem
 
-The solution here is pretty clear, we just need to make sure we're careful with our **selectors** and make sure that they're unique across the **entire app**.
+The solution here is pretty clear; we  need to make sure we're careful with our **selectors** and ensure that they're unique across the **entire app**.
 
-I'm going to give you **two** ways to do this.  There are of course others but the key is to be very precise in what you're binding to.
+Listed below are **two** ways to do this.  There are of course others but the key is to be very precise in what you're binding to.
 
 1. Use very specific complex selectors or very specific IDs.
-  
+
   ```html
   <!-- this -->
   <button class="btn" id="save">
   <!-- can be refactored to -->
   <button class="btn" id="new-save-post">
   ```
-  
-  Another alternative might be to scope our jQuery better.
-  
+
+    Another alternative might be to scope our jQuery better.
+
   ```js
   //this
-  $('button#save').on('click', function(e) { 
+  $('button#save').on('click', function(e) {...});
   // refactors to:
-  $('div#post-single-form button#save').on('click', function(e) { 
+  $('div#post-single-form button#save').on('click', function(e) {...});
   ```
-  
+
   In either case the key is to make our **selectors** as specific as possible.
-  
+
 1. The other alternative is to add a little page-specific identifier to each page.  Then we can bind our JS to that:
 
   ```html
   <!-- app/views/layouts/application.html.erb -->
-	
+
 	<body class="<%= controller_name %> <%= action_name %>">
 	  <%= yield %>
 	</body>  
   ```
-  
+
   Then in our JS we can bind to the now modified body tag.
-  
+
   ```js
   postNewView = 'body.posts.show';
-  $(postNewView + ' #save').on('click', func..
+  $(postNewView + ' #save').on('click', function(){...});
   // or
-  $(postNewView).on('click', '#save', func...
+  $(postNewView).on('click', '#save', function(){...});
   ```
- 
+
 ____
- 
+
 ## Working with turbolinks
-  
+
 ### What is turbolinks?
-  
+
 **Turbolinks is magic**.  It uses JavaScript to take over all the `<a href=...` tags.  
 
 
-When the user clicks a link: 
+When the user clicks a link:
 
-1. it `preventDefault`s on the clicked link 
+1. it `preventDefault`s on the clicked link.
 2. If the link is cached it uses the cached version!  Otherwise it makes an AJAX request for the html the link pointed to.  _(HTML not JSON)_
 3. The server responds with HTML for the requested page.  
 4. Turbolinks replaces the body of the current page with the HTML body it received from the server.
@@ -190,37 +200,36 @@ When the user clicks a link:
 
 Turbolinks takes over managing the html history using `history.pushState` and sets the URL of the browser.
 
-  
+
 #####  Why does it do this?  
 
 **It makes your app faster.**  A full page load takes a fair bit of time for a browser.
-But with turbolinks our browser doesn't have to re-parse the entire document for each request.  It doesn't have to recompile the JS and the CSS for each request.  Instead your JS keeps running in the background.  We gain some of the speed benefits of a **S**ingle **P**age **A**pp but we get the coding simplicity of continuing to work with the standard monolithic structure. 
+But with Turbolinks, our browser doesn't have to re-parse the entire document for each request.  It doesn't have to recompile the JS and the CSS for each request.  Instead, your JS keeps running in the background.  We gain some of the speed benefits of a Single Page App, but we get the coding simplicity of continuing to work with the standard monolithic structure.
 
-Try it out in your app, you should be able to notice a difference.
+If you try it out in any of your apps, you should be able to notice a difference.
+
+### Working with Turbolinks
+
+With Turbolinks, we have a few extra considerations to keep in mind, differences from how we could use JavaScript in our MEAN stack apps.
+
+* Since the JavaScript isn't reloaded each page and keeps running for much longer, we have to be more careful about using global variables, leaking memory and just generally being considerate.  The JS processes will stay running for a much longer time.
+* document-ready only happens on the first page.  Instead of `$(document).on('ready'`, we can use `$(document).on('page:load'`.  
 
 
-### Working with turbolinks
-
-With turbolinks we have a few considerations to keep in mind.
-
-* Since the JavaScript isn't reloaded each page and keeps running for much longer we have to be more careful about using global variables, leaking memory and just generally being considerate.  The JS processes will stay running for a much longer time.
-* document-ready only happens on the first page.  Instead of `$(document).on('ready'` we can use `$(document).on('page:load'`.  
-
-
-Most of the time you can safely just switch to using 
+Most of the time, you can safely switch to using
 
 ```js
-$(document).on('page:load', function...
-// or 
-$(document).on('page:change', function...
+$(document).on('page:load', function(){...})
+// or
+$(document).on('page:change', function(){...})
 ```
 
-Anywhere and _most_ things will work as expected.  
+anywhere and _most_ things will work as expected.  
 
-##### turbolinks events
+##### Turbolinks events
 > from https://github.com/turbolinks/turbolinks-classic
 
-With Turbolinks pages will change without a full reload, so you can't rely on `DOMContentLoaded` or `jQuery.ready()` to trigger your code. Instead Turbolinks fires events on `document` to provide hooks into the lifecycle of the page.
+With Turbolinks, pages will change without a full reload, so you can't rely on `DOMContentLoaded` or `jQuery.ready()` to trigger your code. Instead, Turbolinks fires its own events on `document` to provide hooks into the lifecycle of the page.
 
 Event                | Argument `originalEvent.data` | Notes
 -------------------- | ----------------------------- | -----
@@ -235,15 +244,15 @@ Event                | Argument `originalEvent.data` | Notes
 `page:restore`       |                               | A cached body element has been loaded into the DOM.
 `page:after-remove`  | `affectedNode`                | An element has been removed from the DOM or body evicted from the cache and must be cleaned up. jQuery event listeners are cleaned up automatically.
 
-**Example: load a fresh version of a page from the server** 
+**Example: load a fresh version of a page from the server**
 
-* page:before-change a Turbolinks-enabled link has been clicked (see below for more details)
-* page:fetch starting to fetch a new target page
-* page:receive the page has been fetched from the server, but not yet parsed
-* page:before-unload the page has been parsed and is about to be changed
-* page:change the page has been changed to the new version (and on DOMContentLoaded)
-* page:update is triggered alongside both page:change and jQuery's ajaxSuccess (if jQuery is available - otherwise you can manually trigger it when calling XMLHttpRequest in your own code)
-* page:load is fired at the end of the loading process.
+* `page:before-change` a Turbolinks-enabled link has been clicked (see below for more details)
+* `page:fetch` starting to fetch a new target page
+* `page:receive` the page has been fetched from the server, but not yet parsed
+* `page:before-unload` the page has been parsed and is about to be changed
+* `page:change` the page has been changed to the new version (and on DOMContentLoaded)
+* `page:update` is triggered alongside both page:change and jQuery's ajaxSuccess (if jQuery is available - otherwise you can manually trigger it when calling XMLHttpRequest in your own code)
+* `page:load` is fired at the end of the loading process.
 
 
 ## Resources
