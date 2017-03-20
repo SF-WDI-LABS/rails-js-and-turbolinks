@@ -169,7 +169,7 @@ Listed below are **two** ways to do this.  There are of course others but the ke
 	</body>  
   ```
 
-  Then in our JS we can bind to the now modified body tag.
+  Then in our JS we can bind to the modified body tag.
 
   ```js
   postNewView = 'body.posts.show';
@@ -177,8 +177,6 @@ Listed below are **two** ways to do this.  There are of course others but the ke
   // or
   $(postNewView).on('click', '#save', function(){...});
   ```
-
-____
 
 ## Working with Turbolinks
 
